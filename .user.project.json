@@ -1,0 +1,140 @@
+{
+	"run": [{
+		"filePath": "/deferredtaxrollforward/webapp/test/flpSandbox.html",
+		"previewMode": 1,
+		"dataMode": 1,
+		"workspace": "withoutWorkspace",
+		"urlParameters": [{
+			"paramName": "",
+			"paramValue": "",
+			"paramActive": false
+		}, {
+			"paramName": "",
+			"paramValue": "",
+			"paramActive": false
+		}],
+		"hashParameter": "DeferredTaxRollForward-display",
+		"ui5ActiveVersion": "snapshot",
+		"ui5VerSource": null,
+		"isDefaultVersion": 1,
+		"_metadata": {
+			"id": "2736268",
+			"runnerId": "webapprunner",
+			"displayName": "App in FLP Sandbox"
+		}
+	}, {
+		"filePath": "/deferredtaxrollforward/webapp/test/flpSandboxMockServer.html",
+		"previewMode": 1,
+		"dataMode": 1,
+		"workspace": "withoutWorkspace",
+		"urlParameters": [{
+			"paramName": "",
+			"paramValue": "",
+			"paramActive": false
+		}, {
+			"paramName": "",
+			"paramValue": "",
+			"paramActive": false
+		}],
+		"hashParameter": "DeferredTaxRollForward-display",
+		"ui5ActiveVersion": "snapshot",
+		"ui5VerSource": null,
+		"isDefaultVersion": 1,
+		"_metadata": {
+			"id": "4863663",
+			"runnerId": "webapprunner",
+			"displayName": "App in FLP Sandbox (Mock Server)"
+		}
+	}, {
+		"filePath": "/deferredtaxrollforward/webapp/test/unit/unitTests.qunit.html",
+		"previewMode": 1,
+		"dataMode": 1,
+		"workspace": "withoutWorkspace",
+		"ui5ActiveVersion": "snapshot",
+		"ui5VerSource": null,
+		"isDefaultVersion": 1,
+		"urlParameters": [{
+			"paramName": "",
+			"paramValue": "",
+			"paramActive": false
+		}, {
+			"paramName": "",
+			"paramValue": "",
+			"paramActive": false
+		}],
+		"_metadata": {
+			"id": "4933814",
+			"runnerId": "webapprunner",
+			"displayName": "Unit Tests"
+		}
+	}, {
+		"filePath": "/deferredtaxrollforward/webapp/test/integration/opaTests.qunit.html",
+		"previewMode": 1,
+		"dataMode": 1,
+		"workspace": "withoutWorkspace",
+		"ui5ActiveVersion": "snapshot",
+		"ui5VerSource": null,
+		"isDefaultVersion": 1,
+		"urlParameters": [{
+			"paramName": "",
+			"paramValue": "",
+			"paramActive": false
+		}, {
+			"paramName": "",
+			"paramValue": "",
+			"paramActive": false
+		}],
+		"hashParameter": "",
+		"_metadata": {
+			"id": "2546263",
+			"runnerId": "webapprunner",
+			"displayName": "OPA Tests"
+		}
+	}, {
+		"filePath": "/deferredtaxrollforward/webapp/test/testsuite.qunit.html",
+		"previewMode": 1,
+		"dataMode": 1,
+		"workspace": "withoutWorkspace",
+		"ui5ActiveVersion": "snapshot",
+		"ui5VerSource": null,
+		"isDefaultVersion": 1,
+		"urlParameters": [{
+			"paramName": "",
+			"paramValue": "",
+			"paramActive": false
+		}, {
+			"paramName": "",
+			"paramValue": "",
+			"paramActive": false
+		}],
+		"hashParameter": "",
+		"_metadata": {
+			"id": "8367243",
+			"runnerId": "webapprunner",
+			"displayName": "Test Suite (Unit, OPA)"
+		}
+	}, {
+		"filePath": "/deferredtaxrollforward/webapp/Component.js",
+		"previewMode": 1,
+		"dataMode": 1,
+		"workspace": "withoutWorkspace",
+		"ui5ActiveVersion": "snapshot",
+		"ui5VerSource": null,
+		"isDefaultVersion": 1,
+		"urlParameters": [{
+			"paramName": "",
+			"paramValue": "",
+			"paramActive": false
+		}, {
+			"paramName": "",
+			"paramValue": "",
+			"paramActive": false
+		}],
+		"hashParameter": "",
+		"_metadata": {
+			"id": "2103618",
+			"runnerId": "fiorirunner",
+			"displayName": "App as Fiori Component"
+		}
+	}]
+}

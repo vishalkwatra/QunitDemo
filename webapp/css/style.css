@@ -1,0 +1,44 @@
+/*~~~~~~~~~~~~~			CSS		~~~~~~~~~~~~~~~*/
+
+
+/*---------------------		Column Colouring	----------------*/
+/*---------------------		Warning sign appearing because of conditional selector([])		--------------*/
+/*	where 'headers' property contains 'idGaapOpeningBalance'	*/
+
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idOBClass],
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idCBClass],
+
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idPlOpeningBalance],
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idEqOpeningBalance],
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idOpeningBalanceDTADTL],
+
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idPlYearBalance],
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idEqYearBalance],
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idOPlYearBalance],
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idOEqYearBalance],
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idCurrentYearMvmnt],
+
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idCTAPl],
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idCTAEq],
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idCTA] {
+    background-color: #DEDEE3;
+}
+
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idOBClass]:hover,
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idCBClass]:hover,
+
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idPlOpeningBalance]:hover,
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idEqOpeningBalance]:hover,
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idOpeningBalanceDTADTL]:hover,
+
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idPlYearBalance]:hover,
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idEqYearBalance]:hover,
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idOPlYearBalance]:hover,
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idOEqYearBalance]:hover,
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idCurrentYearMvmnt]:hover,
+
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idCTAPl]:hover,
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idCTAEq]:hover,
+.classAnalyticalTable>div>div>div>div>table>tbody>tr>td[id*=idCTA]:hover {
+    background-color: transparent;
+}

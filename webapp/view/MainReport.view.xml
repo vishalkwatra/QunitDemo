@@ -1,0 +1,483 @@
+<mvc:View controllerName="ey.sap.fin.cs.deferredtaxrollfwd.controller.MainReport" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:table="sap.ui.table"
+	xmlns:smartfield="sap.ui.comp.smartfield" xmlns:core="sap.ui.core" xmlns:f="sap.f" xmlns:sv="sap.ui.comp.smartvariants"
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" xmlns:navpopover="sap.ui.comp.navpopover">
+	<f:DynamicPage id="idTRFMainRepDynamicPage" headerExpanded="true">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<sv:SmartVariantManagement id="idTRFMainRepSmartVariantMgmt" persistencyKey="ey.sap.fin.cs.deferredtaxrollfwd.controller.MainReport"
+						showShare="true" showExecuteOnSelection="true" entitySet="xEY1xSAV_C_DeferredTaxRollFrwd"/>
+				</f:heading>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader pinnable="true">
+				<f:content>
+					<smartFilterBar:SmartFilterBar id="idTRFMainRepSmartFilterBar" smartVariant="idTRFMainRepSmartVariantMgmt"
+						persistencyKey="ey.sap.fin.cs.deferredtaxrollfwd.controller.MainReport.FilterBar" considerSelectionVariants="true"
+						entitySet="xEY1xSAV_C_DeferredTaxRollFrwd" search="onSearchButtonPressed" enableBasicSearch="true" useToolbar="false"
+						basicSearchFieldName="GLAccount,AccountClassCode,GLAccountMdmText" pendingChange="onRbUnitChange"
+						beforeVariantSave="onBeforeVariantSaveFilterBar" afterVariantLoad="onAfterVariantLoadFilterBar">
+						<smartFilterBar:controlConfiguration>
+							<smartFilterBar:ControlConfiguration id="idRbunit" key="ConsolidationUnit" label="{i18n>labelConsUnit}" mandatory="mandatory"
+								hasValueHelpDialog="true" visibleInAdvancedArea="true" displayBehaviour="descriptionAndId" index="1">
+								<smartFilterBar:customControl>
+									<ComboBox id="idConsUnit" items="{ path: '/C_CnsldtnUnitValueHelp'}" change="onConsUnitChange" showSecondaryValues="true" valueState='None'
+										filterSecondaryValues="true">
+										<core:ListItem id="idConsUnitLI" key="{ConsolidationUnit}" text="{ConsolidationUnitText}" additionalText="{ConsolidationUnit}"/>
+									</ComboBox>
+								</smartFilterBar:customControl>
+							</smartFilterBar:ControlConfiguration>
+							<smartFilterBar:ControlConfiguration id="idRyear" key="FiscalYear" label="{i18n>labelFiscalYear}" visibleInAdvancedArea="true" index="2"
+								mandatory="mandatory">
+								<smartFilterBar:customControl>
+									<DatePicker id="idFiscalYearFilter" displayFormat="yyyy" change="onChangeDatePickerFilter"/>
+								</smartFilterBar:customControl>
+							</smartFilterBar:ControlConfiguration>
+							<smartFilterBar:ControlConfiguration id="idIntention" key="Intention" label="{i18n>labelIntention}" hasValueHelpDialog="true"
+								visibleInAdvancedArea="true" displayBehaviour="descriptionAndId" index="3">
+								<smartFilterBar:customControl>
+									<ComboBox id="idIntentionComboBox" items="{intentionVHModel>/results}" change="onChangeIntentionComboBox" showSecondaryValues="true"
+										valueState='None' filterSecondaryValues="true">
+										<core:ListItem id="idIntentionComboBoxLI" key="{intentionVHModel>Intent}" text="{intentionVHModel>IntentDescription}"
+											additionalText="{intentionVHModel>ConsolidationUnit}"/>
+									</ComboBox>
+								</smartFilterBar:customControl>
+							</smartFilterBar:ControlConfiguration>
+							<smartFilterBar:ControlConfiguration id="idPeriodFrom" key="PeriodFrom" label="{i18n>labelPeriodFrom}" index="4">
+								<smartFilterBar:customControl>
+									<Input id="idPeriodFromInput" type="Number" maxLength="3" value="1" editable="false"/>
+								</smartFilterBar:customControl>
+							</smartFilterBar:ControlConfiguration>
+							<smartFilterBar:ControlConfiguration id="idPeriodTo" key="PeriodTo" label="{i18n>labelPeriodTo}" index="5">
+								<smartFilterBar:customControl>
+									<Input id="idPeriodToInput" type="Number" maxLength="3" value="12" liveChange="onLiveChangePeriodTo"/>
+								</smartFilterBar:customControl>
+							</smartFilterBar:ControlConfiguration>
+							<smartFilterBar:ControlConfiguration id="idCurrType" key="CurrencyType" label="{i18n>labelCurrency}" mandatory="mandatory"
+								hasValueHelpDialog="true" visibleInAdvancedArea="true" displayBehaviour="descriptionAndId" index="6" visible="false">
+								<smartFilterBar:customControl>
+									<ComboBox id="idCurrency" items="{currLocalGroupVHModel>/results}" showSecondaryValues="false">
+										<core:ListItem id="idLocalLI" key="{currLocalGroupVHModel>Currency}"
+											text="{currLocalGroupVHModel>CurrencyType} ({currLocalGroupVHModel>Currency})" additionalText="{currLocalGroupVHModel>CurrencyType}"/>
+									</ComboBox>
+								</smartFilterBar:customControl>
+							</smartFilterBar:ControlConfiguration>
+						</smartFilterBar:controlConfiguration>
+						<!--layout data used to make the table growing but the filter bar fixed -->
+						<smartFilterBar:layoutData>
+							<FlexItemData id="idFlexItemdata" shrinkFactor="0"/>
+						</smartFilterBar:layoutData>
+					</smartFilterBar:SmartFilterBar>
+				</f:content>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<smartTable:SmartTable id="idTRFMainRepSmartTable" entitySet="xEY1xSAV_C_DeferredTaxRollFrwdResults"
+				initiallyVisibleFields="GLAccount,GLAccountMdmText,AccountClassCode,MainCurrency,OBClass,CBClass,OBRate,CBRate,PlOpeningBalance,EqOpeningBalance,OpeningBalanceDTADTL,PYAPl,PYAEq,PYAOpl,PYAOeq,PYA,PlYearBalance,EqYearBalance,OPlYearBalance,OEqYearBalance,CurrentYearMvmnt,TRCPl,TRCEq,TRC,CTAPl,CTAEq,CTA,PlClosingBalance,EqClosingBalance,ClosingBalanceDTADTL"
+				tableType="AnalyticalTable" smartFilterId="idTRFMainRepSmartFilterBar" showFullScreenButton="true" showVariantManagement="true"
+				useVariantManagement="true" useTablePersonalisation="true" header="{i18n>headerTempRollFwd}" editTogglable="false"
+				fieldChange="onFieldChange" requestAtLeastFields="ConsolidationUnit,ConsolidationChartofAccounts" persistencyKey="ConsolidationUnit"
+				customData:useSmartField="true" beforeRebindTable="onBeforeRebindTable" showRowCount="true" enableAutoBinding="false"
+				class="sapUiResponsiveContentPadding" dataReceived="onDataReceivedSmartTable"
+				ignoreFromPersonalisation="CurrencyType,PeriodFrom,PeriodTo,TaxEffected,ConsolidationChartofAccounts,ChartOfAccounts,FiscalYear,ConsolidationUnit,ID,ConsolidationDimension,ReportingType">
+				<smartTable:customToolbar>
+					<Toolbar id="idCustomToolbar1">
+						<SegmentedButton id="idTRFMainRepSegmentedBtn" items="{modelReportingType>/results}" selectionChange="onChangeButtonReportingType">
+							<items>
+								<SegmentedButtonItem id="idTRFMainRepSegmentedBtnItem" text="{modelReportingType>text}" key="{modelReportingType>key}"/>
+							</items>
+						</SegmentedButton>
+						<ToolbarSpacer id="idToolbarSpacerTRF"/>
+						<Button id="idAdjustColBtn" icon="sap-icon://resize-horizontal" tooltip="{i18n>optimizeColumnsWidthBtnTxt}" press="onAdjustTableCol"/>
+					</Toolbar>
+				</smartTable:customToolbar>
+				<table:AnalyticalTable id="idTRFMainRepInnerTable" columnHeaderVisible="true" firstVisibleRow="0" visibleRowCountMode="Auto"
+					class="classAnalyticalTable">
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ GL Account ~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idGlAccount" summed="false" leadingProperty="GLAccount" autoResizable="true"
+						columnMenuOpen="onPressColumnMenuOpenGLAccount">
+						<table:template>
+							<Text id="idGlAccountText" text="{GLAccount}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idGlAccountColumn" key="p13nData"
+								value='\{"columnKey": "GLAccount", "leadingProperty": "GLAccount", "columnIndex": "0", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!---->
+					<!---->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ Account Class Code COLUMNS ~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idAccountClassCode" summed="false" leadingProperty="AccountClassCode" sortProperty="AccountClassCode"
+						filterProperty="AccountClassCode" autoResizable="true">
+						<Label id="idColumnHeaderAccountClassCode" text="{i18n>columnHeaderAccountClass}" labelFor="AccountClassCode" wrapping="false"/>
+						<table:template>
+							<navpopover:SmartLink id="idAccountClassCodeLink" text="{AccountClassCode}" semanticObject="AccountClassCode"
+								enableAvailableActionsPersonalization="true"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idAccountClassCodeColumn" key="p13nData"
+								value='\{"columnKey": "AccountClassCode", "leadingProperty": "AccountClassCode", "columnIndex": "2"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!---->
+					<!---->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ Classes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idOBClass" summed="true" leadingProperty="OBClass" sortProperty="OBClass" filterProperty="OBClass"
+						autoResizable="true" hAlign="End">
+						<Label id="idOBClassLabel" text="{i18n>columnHeaderOBClass}" textAlign="Right" labelFor="OBClass" wrapping="false"/>
+						<table:template>
+							<Text id="idOBClassText" text="{OBClass}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idOBClassColumn" key="p13nData"
+								value='\{"columnKey": "OBClass", "leadingProperty": "OBClass", "columnIndex": "4", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<table:AnalyticalColumn id="idCBClass" summed="true" leadingProperty="CBClass" sortProperty="CBClass" filterProperty="CBClass"
+						autoResizable="true" hAlign="End">
+						<Label id="idCBClassLabel" text="{i18n>columnHeaderCBClass}" textAlign="Right" labelFor="CBClass" wrapping="false"/>
+						<table:template>
+							<Text id="idCBClassText" text="{CBClass}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idCBClassColumn" key="p13nData"
+								value='\{"columnKey": "CBClass", "leadingProperty": "CBClass", "columnIndex": "5", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!---->
+					<!---->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ Tax Rates ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idOBRate" summed="false" leadingProperty="OBRate" sortProperty="OBRate" filterProperty="OBRate"
+						autoResizable="true" hAlign="End">
+						<Label id="idOBRateLabel" text="{i18n>columnHeaderOBDTRate}" textAlign="Right" labelFor="OBRate" wrapping="false"/>
+						<table:template>
+							<Text id="idOBRateText" text="{path:'OBRate', formatter: '.formatter.appendPercentageSign'}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idOBRateColumn" key="p13nData"
+								value='\{"columnKey": "OBRate", "leadingProperty": "OBRate", "columnIndex": "6", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<table:AnalyticalColumn id="idCBRate" summed="false" leadingProperty="CBRate" sortProperty="CBRate" filterProperty="CBRate"
+						autoResizable="true" hAlign="End">
+						<Label id="idCBRateLabel" text="{i18n>columnHeaderCBDTRate}" textAlign="Right" labelFor="CBRate" wrapping="false"/>
+						<table:template>
+							<Text id="idCBRateText" text="{path:'CBRate', formatter: '.formatter.appendPercentageSign'}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idCBRateColumn" key="p13nData"
+								value='\{"columnKey": "CBRate", "leadingProperty": "CBRate", "columnIndex": "7", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!---->
+					<!---->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ Opening Balance COLUMNS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ P&L ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idPlOpeningBalance" summed="true" leadingProperty="PlOpeningBalance" sortProperty="PlOpeningBalance"
+						filterProperty="PlOpeningBalance" autoResizable="true" hAlign="End">
+						<Label id="idPlOpeningBalanceLabel" text="{i18n>columnHeaderOBPnL}" textAlign="Right" labelFor="PlOpeningBalance" wrapping="false"/>
+						<table:template>
+							<Text id="idPlOpeningBalanceText"
+								text="{parts : [{path:'PlOpeningBalance'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idPlOpeningBalanceColumn" key="p13nData"
+								value='\{"columnKey": "PlOpeningBalance", "leadingProperty": "PlOpeningBalance", "columnIndex": "8", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ EQ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idEqOpeningBalance" summed="true" leadingProperty="EqOpeningBalance" sortProperty="EqOpeningBalance"
+						filterProperty="EqOpeningBalance" autoResizable="true" hAlign="End">
+						<Label id="idEqOpeningBalanceLabel" text="{i18n>columnHeaderOBEQ}" textAlign="Right" labelFor="EqOpeningBalance" wrapping="false"/>
+						<table:template>
+							<Text id="idEqOpeningBalanceText"
+								text="{parts : [{path:'EqOpeningBalance'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idEqOpeningBalanceColumn" key="p13nData"
+								value='\{"columnKey": "EqOpeningBalance", "leadingProperty": "EqOpeningBalance", "columnIndex": "9", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ DTA/DTL ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idOpeningBalanceDTADTL" summed="true" leadingProperty="OpeningBalanceDTADTL" sortProperty="OpeningBalanceDTADTL"
+						filterProperty="OpeningBalanceDTADTL" autoResizable="true" hAlign="End">
+						<Label id="idOpeningBalanceDTADTLLabel" text="{i18n>columnHeaderOBTemp}" textAlign="Right" labelFor="OpeningBalanceDTADTL" wrapping="false"/>
+						<table:template>
+							<Text id="idOpeningBalanceDTADTLText"
+								text="{parts : [{path:'OpeningBalanceDTADTL'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idOpeningBalanceDTADTLColumn" key="p13nData"
+								value='\{"columnKey": "OpeningBalanceDTADTL", "leadingProperty": "OpeningBalanceDTADTL", "columnIndex": "10", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!---->
+					<!---->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ PYA Columns ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ P&L ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idPYAPl" summed="true" leadingProperty="PYAPl" sortProperty="PYAPl" filterProperty="PYAPl" autoResizable="true"
+						hAlign="End">
+						<Label id="idPYAPlLabel" text="{i18n>columnHeaderPYAPnL}" textAlign="Right" labelFor="PYAPl" wrapping="false"/>
+						<table:template>
+							<Text id="idPYAPlText"
+								text="{parts : [{path:'PYAPl'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idPYAPlColumn" key="p13nData"
+								value='\{"columnKey": "PYAPl", "leadingProperty": "PYAPl", "columnIndex": "11", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ EQ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idPYAEq" summed="true" leadingProperty="PYAEq" sortProperty="PYAEq" filterProperty="PYAEq" autoResizable="true"
+						hAlign="End">
+						<Label id="idPYAEqLabel" text="{i18n>columnHeaderPYAEQ}" textAlign="Right" labelFor="PYAEq" wrapping="false"/>
+						<table:template>
+							<Text id="idPYAEqText"
+								text="{parts : [{path:'PYAEq'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idPYAEqColumn" key="p13nData"
+								value='\{"columnKey": "PYAEq", "leadingProperty": "PYAEq", "columnIndex": "12", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ Other P&L ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idPYAOpl" summed="true" leadingProperty="PYAOpl" sortProperty="PYAOpl" filterProperty="PYAOpl"
+						autoResizable="true" hAlign="End">
+						<Label id="idPYAOplLabel" text="{i18n>columnHeaderPYAOtherPnL}" textAlign="Right" labelFor="PYAOpl" wrapping="false"/>
+						<table:template>
+							<Text id="idPYAOplText"
+								text="{parts : [{path:'PYAOpl'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idPYAOplColumn" key="p13nData"
+								value='\{"columnKey": "PYAOpl", "leadingProperty": "PYAOpl", "columnIndex": "13", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ Other EQ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idPYAOeq" summed="true" leadingProperty="PYAOeq" sortProperty="PYAOeq" filterProperty="PYAOeq"
+						autoResizable="true" hAlign="End">
+						<Label id="idPYAOeqLabel" text="{i18n>columnHeaderPYAOtherEQ}" textAlign="Right" labelFor="PYAOeq" wrapping="false"/>
+						<table:template>
+							<Text id="idPYAOeqText"
+								text="{parts : [{path:'PYAOeq'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idPYAOeqColumn" key="p13nData"
+								value='\{"columnKey": "PYAOeq", "leadingProperty": "PYAOeq", "columnIndex": "14", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ PYA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idPYA" summed="true" leadingProperty="PYA" sortProperty="PYA" filterProperty="PYA" autoResizable="true"
+						hAlign="End">
+						<Label id="idPYALabel" text="{i18n>columnHeaderPYA}" textAlign="Right" labelFor="PYA" wrapping="false"/>
+						<table:template>
+							<Text id="idPYAText"
+								text="{parts : [{path:'PYA'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idPYAColumn" key="p13nData"
+								value='\{"columnKey": "PYA", "leadingProperty": "PYA", "columnIndex": "15", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!---->
+					<!---->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ Current Year Balance Columns (CY or YB) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ P&L ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idPlYearBalance" summed="true" leadingProperty="PlYearBalance" sortProperty="PlYearBalance"
+						filterProperty="PlYearBalance" autoResizable="true" hAlign="End">
+						<Label id="idPlYearBalanceLabel" text="{i18n>columnHeaderCYPnL}" textAlign="Right" labelFor="PlYearBalance" wrapping="false"/>
+						<table:template>
+							<Text id="idPlYearBalanceText"
+								text="{parts : [{path:'PlYearBalance'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idPlYearBalanceColumn" key="p13nData"
+								value='\{"columnKey": "PlYearBalance", "leadingProperty": "PlYearBalance", "columnIndex": "16", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ EQ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idEqYearBalance" summed="true" leadingProperty="EqYearBalance" sortProperty="EqYearBalance"
+						filterProperty="EqYearBalance" autoResizable="true" hAlign="End">
+						<Label id="idEqYearBalanceLabel" text="{i18n>columnHeaderCYEQ}" textAlign="Right" labelFor="EqYearBalance" wrapping="false"/>
+						<table:template>
+							<Text id="idEqYearBalanceText"
+								text="{parts : [{path:'EqYearBalance'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idEqYearBalanceColumn" key="p13nData"
+								value='\{"columnKey": "EqYearBalance", "leadingProperty": "EqYearBalance", "columnIndex": "17", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ Other P&L ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idOPlYearBalance" summed="true" leadingProperty="OPlYearBalance" sortProperty="OPlYearBalance"
+						filterProperty="OPlYearBalance" autoResizable="true" hAlign="End">
+						<Label id="idOPlYearBalanceLabel" text="{i18n>columnHeaderCYOtherPnL}" textAlign="Right" labelFor="OPlYearBalance" wrapping="false"/>
+						<table:template>
+							<Text id="idOPlYearBalanceText"
+								text="{parts : [{path:'OPlYearBalance'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idOPlYearBalanceColumn" key="p13nData"
+								value='\{"columnKey": "OPlYearBalance", "leadingProperty": "OPlYearBalance", "columnIndex": "18", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ Other EQ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idOEqYearBalance" summed="true" leadingProperty="OEqYearBalance" sortProperty="OEqYearBalance"
+						filterProperty="OEqYearBalance" autoResizable="true" hAlign="End">
+						<Label id="idOEqYearBalanceLabel" text="{i18n>columnHeaderCYOtherEQ}" textAlign="Right" labelFor="OEqYearBalance" wrapping="false"/>
+						<table:template>
+							<Text id="idOEqYearBalanceText"
+								text="{parts : [{path:'OEqYearBalance'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idOEqYearBalanceColumn" key="p13nData"
+								value='\{"columnKey": "OEqYearBalance", "leadingProperty": "OEqYearBalance", "columnIndex": "19", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ Current Year Movement ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idCurrentYearMvmnt" summed="true" leadingProperty="CurrentYearMvmnt" sortProperty="CurrentYearMvmnt"
+						filterProperty="CurrentYearMvmnt" autoResizable="true" hAlign="End">
+						<Label id="idCurrentYearMvmntLabel" text="{i18n>columnHeaderCurrentYearMovement}" textAlign="Right" labelFor="CurrentYearMvmnt"
+							wrapping="false"/>
+						<table:template>
+							<Text id="idCurrentYearMvmntText"
+								text="{parts : [{path:'CurrentYearMvmnt'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idCurrentYearMvmntColumn" key="p13nData"
+								value='\{"columnKey": "CurrentYearMvmnt", "leadingProperty": "CurrentYearMvmnt", "columnIndex": "20", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!---->
+					<!---->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ TRC Columns ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ P&L ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idTRCPl" summed="true" leadingProperty="TRCPl" sortProperty="TRCPl" filterProperty="TRCPl" autoResizable="true"
+						hAlign="End">
+						<Label id="idTRCPlLabel" text="{i18n>columnHeaderTRCPnL}" textAlign="Right" labelFor="TRCPl" wrapping="false"/>
+						<table:template>
+							<Text id="idTRCPlText"
+								text="{parts : [{path:'TRCPl'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idTRCPlColumn" key="p13nData"
+								value='\{"columnKey": "TRCPl", "leadingProperty": "TRCPl", "columnIndex": "21", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ EQ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idTRCEq" summed="true" leadingProperty="TRCEq" sortProperty="TRCEq" filterProperty="TRCEq" autoResizable="true"
+						hAlign="End">
+						<Label id="idTRCEqLabel" text="{i18n>columnHeaderTRCEQ}" textAlign="Right" labelFor="TRCEq" wrapping="false"/>
+						<table:template>
+							<Text id="idTRCEqText"
+								text="{parts : [{path:'TRCEq'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idTRCEqColumn" key="p13nData"
+								value='\{"columnKey": "TRCEq", "leadingProperty": "TRCEq", "columnIndex": "22", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ TRC ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idTRC" summed="true" leadingProperty="TRC" sortProperty="TRC" filterProperty="TRC" autoResizable="true"
+						hAlign="End">
+						<Label id="idTRCLabel" text="{i18n>columnHeaderTRC}" textAlign="Right" labelFor="TRC" wrapping="false"/>
+						<table:template>
+							<Text id="idTRCText"
+								text="{parts : [{path:'TRC'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idTRCColumn" key="p13nData"
+								value='\{"columnKey": "TRC", "leadingProperty": "TRC", "columnIndex": "23", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!---->
+					<!---->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ CTA Columns ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ P&L ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idCTAPl" summed="true" leadingProperty="CTAPl" sortProperty="CTAPl" filterProperty="CTAPl" autoResizable="true"
+						hAlign="End">
+						<Label id="idCTAPlLabel" text="{i18n>columnHeaderCTAPnL}" textAlign="Right" labelFor="CTAPl" wrapping="false"/>
+						<table:template>
+							<Text id="idCTAPlText"
+								text="{parts : [{path:'CTAPl'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idCTAPlColumn" key="p13nData"
+								value='\{"columnKey": "CTAPl", "leadingProperty": "CTAPl", "columnIndex": "24", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ EQ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idCTAEq" summed="true" leadingProperty="CTAEq" sortProperty="CTAEq" filterProperty="CTAEq" autoResizable="true"
+						hAlign="End">
+						<Label id="idCTAEqLabel" text="{i18n>columnHeaderCTAEQ}" textAlign="Right" labelFor="CTAEq" wrapping="false"/>
+						<table:template>
+							<Text id="idCTAEqText"
+								text="{parts : [{path:'CTAEq'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idCTAEqColumn" key="p13nData"
+								value='\{"columnKey": "CTAEq", "leadingProperty": "CTAEq", "columnIndex": "25", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ CTA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idCTA" summed="true" leadingProperty="CTA" sortProperty="CTA" filterProperty="CTA" autoResizable="true"
+						hAlign="End">
+						<Label id="idCTALabel" text="{i18n>columnHeaderCTA}" textAlign="Right" labelFor="CTA" wrapping="false"/>
+						<table:template>
+							<Text id="idCTAText"
+								text="{parts : [{path:'CTA'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idCTAColumn" key="p13nData"
+								value='\{"columnKey": "CTA", "leadingProperty": "CTA", "columnIndex": "26", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!---->
+					<!---->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ Closing Balance Columns ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ P&L ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idPlClosingBalance" summed="true" leadingProperty="PlClosingBalance" sortProperty="PlClosingBalance"
+						filterProperty="PlClosingBalance" autoResizable="true" hAlign="End">
+						<Label id="idPlClosingBalanceLabel" text="{i18n>columnHeaderCBPnL}" textAlign="Right" labelFor="PlClosingBalance" wrapping="false"/>
+						<table:template>
+							<Text id="idPlClosingBalanceText"
+								text="{parts : [{path:'PlClosingBalance'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idPlClosingBalanceColumn" key="p13nData"
+								value='\{"columnKey": "PlClosingBalance", "leadingProperty": "PlClosingBalance", "columnIndex": "27", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ EQ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idEqClosingBalance" summed="true" leadingProperty="EqClosingBalance" sortProperty="EqClosingBalance"
+						filterProperty="EqClosingBalance" autoResizable="true" hAlign="End">
+						<Label id="idEqClosingBalanceLabel" text="{i18n>columnHeaderCBEQ}" textAlign="Right" labelFor="EqClosingBalance" wrapping="false"/>
+						<table:template>
+							<Text id="idEqClosingBalanceText"
+								text="{parts : [{path:'EqClosingBalance'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idEqClosingBalanceColumn" key="p13nData"
+								value='\{"columnKey": "EqClosingBalance", "leadingProperty": "EqClosingBalance", "columnIndex": "28", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~ Closing Balance ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<table:AnalyticalColumn id="idClosingBalanceDTADTL" summed="true" leadingProperty="ClosingBalanceDTADTL" sortProperty="ClosingBalanceDTADTL"
+						filterProperty="ClosingBalanceDTADTL" autoResizable="true" hAlign="End">
+						<Label id="idClosingBalanceDTADTLLabel" text="{i18n>columnHeaderCBTemp}" textAlign="Right" labelFor="ClosingBalanceDTADTL" wrapping="false"/>
+						<table:template>
+							<Text id="idClosingBalanceDTADTLText"
+								text="{parts : [{path:'ClosingBalanceDTADTL'}, {path:'MainCurrency'}],type: 'sap.ui.model.type.Currency',formatOptions:{showMeasure: false}}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idClosingBalanceDTADTLColumn" key="p13nData"
+								value='\{"columnKey": "ClosingBalanceDTADTL", "leadingProperty": "ClosingBalanceDTADTL", "columnIndex": "29", "type":"numeric"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+				</table:AnalyticalTable>
+			</smartTable:SmartTable>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

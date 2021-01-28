@@ -1,0 +1,139 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f" xmlns:layout="sap.ui.layout"
+	xmlns:smartTable="sap.ui.comp.smarttable" xmlns:table="sap.ui.table" xmlns:smartfield="sap.ui.comp.smartfield"
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	controllerName="ey.sap.fin.cs.deferredtaxrollfwd.controller.JournalEntries" xmlns:html="http://www.w3.org/1999/xhtml">
+	<f:DynamicPage id="idPageJournalEntries" headerExpanded="true" showFooter="true">
+		<f:title>
+			<f:DynamicPageTitle id="idPageJournalEntriesHeader">
+				<f:heading>
+					<Title id="idJournalEntriesTitle"
+						text="{path : 'JournalEntryData>/GLAccount', type : 'sap.ui.model.odata.type.String', constraints: { isDigitSequence : true, maxLength : 10 } }"/>
+				</f:heading>
+				<f:expandedContent>
+					<Label id="idJESubheading" text="{JournalEntryData>/GLAccountDesc}"/>
+				</f:expandedContent>
+				<f:snappedContent>
+					<Label id="idJESubheadingSnapped" text="{JournalEntryData>/GLAccountDesc}"/>
+				</f:snappedContent>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader pinnable="true">
+				<layout:HorizontalLayout id="idJEHLayout" allowWrapping="true">
+					<layout:VerticalLayout id="idJESubheadingFields" class="sapUiMediumMarginEnd">
+						<Title id="idJESubheadingFieldTitle" text="{i18n>labelHeaderField}"/>
+						<ObjectStatus id="idJESubheadingFieldObjStatus" text="{JournalEntryData>/SectionName}" class="sapMObjectStatusLarge sapUiTinyMarginTop"/>
+					</layout:VerticalLayout>
+					<layout:VerticalLayout id="idJEValueFields" class="sapUiMediumMarginEnd">
+						<Title id="idJESubheadingValueFieldTitle" text="{i18n>labelHeaderAmount}"/>
+						<ObjectStatus id="idJEValueHeader" class="sapMObjectStatusLarge sapUiTinyMarginTop"
+							text="{ parts:[{path:'JournalEntryData>/Value'},{path:'JournalEntryData>/Currency'}], formatter: '.formatter.setCurrencyAndUnit' }"/>
+					</layout:VerticalLayout>
+					<layout:HorizontalLayout id="idJEPeriodFromFields" class="sapUiMediumMarginEnd">
+						<Label id="idJELabelPeriodFrom" text="{i18n>labelHeaderPeriodFrom}" class="sapUiTinyMarginEnd"/>
+						<Text id="idJETextPeriodFrom" text="{JournalEntryData>/PeriodFrom}.{JournalEntryData>/FiscalYear}"/>
+					</layout:HorizontalLayout>
+					<layout:HorizontalLayout id="idJEPeriodToFields" class="sapUiMediumMarginEnd">
+						<Label id="idJELabelPeriodTo" text="{i18n>labelHeaderPeriodTo}" class="sapUiTinyMarginEnd"/>
+						<Text id="idJETextPeriodTo" text="{JournalEntryData>/PeriodTo}.{JournalEntryData>/FiscalYear}"/>
+					</layout:HorizontalLayout>
+				</layout:HorizontalLayout>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<smartTable:SmartTable id="idJournalEntriesTable" entitySet="xEY1xSAV_C_CnsldtnJrnlEntryResults"
+				initiallyVisibleFields="RefConsolidationDocumentNumber,CompanyCode,ConsolidationLedger,ConsolidationLedgerName,FiscalPeriod,SpecialPeriod,PostingDate,FinancialTransactionType,AmountInLocalCurrency,AmountInGroupCurrency"
+				tableType="AnalyticalTable" showVariantManagement="true" useVariantManagement="true" useTablePersonalisation="true" header="Journal Entries"
+				requestAtLeastFields="ConsolidationLedger,CompanyCode,ReferenceFiscalYear" persistencyKey="JournalEntries" customData:useSmartField="true"
+				beforeRebindTable="onBeforeRebindJournalEntries" showRowCount="true" enableAutoBinding="true" dataReceived="onJEntriesDataReceived"
+				class="sapUiResponsiveContentPadding">
+				<smartTable:customToolbar>
+					<Toolbar id="idCustomToolbarJE">
+						<ToolbarSpacer id="idToolbarSpacerJE"/>
+						<Button id="idJESync" icon="sap-icon://synchronize" tooltip="{i18n>tooltipSynchronizeBtn}" type="Transparent" press="onPressJEDataSync"/>
+					</Toolbar>
+				</smartTable:customToolbar>
+				<table:AnalyticalTable id="idinnerJournalEntriesTable" columnHeaderVisible="true" visibleRowCount="10" firstVisibleRow="0"
+					visibleRowCountMode="Auto" selectionMode="None">
+					<!--	~~~~~~~~~~~~~~~~~~~~~~~~~	Document Number		~~~~~~~~~~~~~~~~~~~~~~~~	-->
+					<table:AnalyticalColumn id="idJERefConsolidationDocumentNumber" summed="false" leadingProperty="RefConsolidationDocumentNumber"
+						sortProperty="RefConsolidationDocumentNumber" filterProperty="RefConsolidationDocumentNumber" autoResizable="true">
+						<table:template>
+							<Link id="idJERefConsolidationDocumentNumberLink" text="{RefConsolidationDocumentNumber}" press="onPressConsDoc"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idJERefConsolidationDocumentNumberColumn" key="p13nData"
+								value='\{"columnKey": "RefConsolidationDocumentNumber", "leadingProperty":"RefConsolidationDocumentNumber", "columnIndex" : "0" }'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--	~~~~~~~~~~~~~~~~~~~~~~~~~	COMPANY CODE		~~~~~~~~~~~~~~~~~~~~~~~~	-->
+					<table:AnalyticalColumn id="idJECompanyCode" summed="false" leadingProperty="CompanyCode" sortProperty="CompanyCode"
+						filterProperty="CompanyCode" autoResizable="true">
+						<Label id="idLabelCompanyCode" text="{i18n>columnHeaderLabelForCompanyCode}" tooltip="{i18n>columnHeaderLabelForCompanyCodeTooltip}"/>
+						<table:template>
+							<Text id="idJECompanyCodeText" text="{CompanyCode}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idJECompanyCodeColumn" key="p13nData"
+								value='\{"columnKey": "CompanyCode", "leadingProperty":"CompanyCode", "columnIndex" : "1" }'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--	~~~~~~~~~~~~~~~~~~~~~~~~~	POSTING PERIOD		~~~~~~~~~~~~~~~~~~~~~~~~	-->
+					<table:AnalyticalColumn id="idJEFiscalPeriod" summed="false" leadingProperty="FiscalPeriod" sortProperty="FiscalPeriod"
+						filterProperty="FiscalPeriod" autoResizable="true">
+						<Label id="idLabelFiscalPeriod" text="{i18n>columnHeaderLabelForPostingPeriod}" tooltip="{i18n>columnHeaderLabelForPostingPeriodTooltip}"/>
+						<table:template>
+							<!--<Text id="idJEFiscalPeriodText" text="{FiscalPeriod}"/>-->
+							<Text id="idJEFiscalPeriodText" text="{path:'FiscalPeriod', formatter: '.formatter.convertStringToInt'}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idJEFiscalPeriodColumn" key="p13nData"
+								value='\{"columnKey": "FiscalPeriod", "leadingProperty": "FiscalPeriod", "columnIndex": "4"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--	~~~~~~~~~~~~~~~~~~~~~~~~~	FinancialTransactionType		~~~~~~~~~~~~~~~~~~~~~~~~	-->
+					<table:AnalyticalColumn id="idJEFinancialTransactionType" summed="false" leadingProperty="FinancialTransactionType"
+						sortProperty="FinancialTransactionType" filterProperty="FinancialTransactionType" autoResizable="true">
+						<Label id="idLabelFinancialTransactionType" text="{i18n>columnHeaderLabelForFinancialTransactionType}"
+							tooltip="{i18n>columnHeaderLabelForFinancialTransactionTypeTooltip}"/>
+						<table:template>
+							<Text id="idJEFinancialTransactionTypeText" text="{FinancialTransactionType}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idJEFinancialTransactionTypeColumn" key="p13nData"
+								value='\{"columnKey": "FinancialTransactionType", "leadingProperty": "FinancialTransactionType", "columnIndex": "7"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--	~~~~~~~~~~~~~~~~~~~~~~~~~	Amount in Local Currency		~~~~~~~~~~~~~~~~~~~~~~~~	-->
+					<table:AnalyticalColumn id="idJEAmountInLocalCurrency" summed="true" leadingProperty="AmountInLocalCurrency"
+						sortProperty="AmountInLocalCurrency" filterProperty="AmountInLocalCurrency" autoResizable="true" hAlign="Right">
+						<Label id="idLabelAmountInLocalCurrency" text="{i18n>columnHeaderLabelForLocalCurrency}"
+							tooltip="{i18n>columnHeaderLabelForGroupCurrencyTooltip}" textAlign="Right"/>
+						<table:template>
+							<Text id="idJEAmountInLocalCurrencyText"
+								text="{parts : [{path:'AmountInLocalCurrency'}, {path:'LocalCurrency'}], formatter: '.formatter.setCurrencyAndUnit'}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idJEAmountInLocalCurrencyColumn" key="p13nData"
+								value='\{"columnKey": "AmountInLocalCurrency", "leadingProperty": "AmountInLocalCurrency", "columnIndex": "8"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+					<!--	~~~~~~~~~~~~~~~~~~~~~~~~~	Amount in Group Currency		~~~~~~~~~~~~~~~~~~~~~~~~	-->
+					<table:AnalyticalColumn id="idJEAmountInGroupCurrency" summed="true" leadingProperty="AmountInGroupCurrency"
+						sortProperty="AmountInGroupCurrency" filterProperty="AmountInGroupCurrency" autoResizable="true" hAlign="Right">
+						<Label id="idLabelAmountInGroupCurrency" text="{i18n>columnHeaderLabelForGroupCurrency}"
+							tooltip="{i18n>columnHeaderLabelForGroupCurrencyTooltip}" textAlign="Right"/>
+						<table:template>
+							<Text id="idJEAmountInGroupCurrencyText"
+								text="{parts : [{path:'AmountInGroupCurrency'}, {path:'GroupCurrency'}], formatter: '.formatter.setCurrencyAndUnit'}"/>
+						</table:template>
+						<table:customData>
+							<core:CustomData id="idJEAmountInGroupCurrencyColumn" key="p13nData"
+								value='\{"columnKey": "AmountInGroupCurrency", "leadingProperty": "AmountInGroupCurrency", "columnIndex": "9"}'/>
+						</table:customData>
+					</table:AnalyticalColumn>
+				</table:AnalyticalTable>
+			</smartTable:SmartTable>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>
